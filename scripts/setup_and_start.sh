@@ -6,9 +6,18 @@
 # Exit immediately if a command exits with a non-zero status
 set -e
 
+# Minimum required Node.js version
+MIN_NODE_VERSION="18.0.0"
+
 # Function to check if a command exists
 command_exists () {
     command -v "$1" >/dev/null 2>&1
+}
+
+# Function to compare version numbers
+version_greater_equal () {
+    # Returns 0 (true) if $1 >= $2
+    [ "$(printf '%s\n' "$2" "$1" | sort -V | head -n1)" = "$2" ]
 }
 
 # Function to install Node.js and npm
@@ -49,11 +58,8 @@ start_pm2_process () {
 setup_pm2_startup () {
     echo "Setting up PM2 to run on system startup..."
     # Generate and configure the startup script
-    sudo pm2 startup systemd -u "$USER" --hp "$HOME"
-
-    # The above command outputs a command that needs to be executed.
-    # We'll capture and execute it automatically.
     startup_command=$(pm2 startup systemd -u "$USER" --hp "$HOME" | grep sudo)
+
     if [ -n "$startup_command" ]; then
         echo "Executing PM2 startup command..."
         eval "$startup_command"
@@ -65,6 +71,20 @@ setup_pm2_startup () {
     # Save the PM2 process list again to ensure persistence
     pm2 save
     echo "PM2 startup setup completed."
+}
+
+# Function to check Node.js version
+check_node_version () {
+    local current_version
+    current_version=$(node -v | sed 's/v//')
+
+    if version_greater_equal "$current_version" "$MIN_NODE_VERSION"; then
+        echo "Node.js version $current_version meets the requirement."
+    else
+        echo "Node.js version $current_version is below the required version $MIN_NODE_VERSION."
+        echo "Upgrading Node.js..."
+        install_node_npm
+    fi
 }
 
 # Main execution flow
@@ -80,6 +100,7 @@ main () {
     # Install Node.js and npm if not installed
     if command_exists node && command_exists npm; then
         echo "Node.js and npm are already installed."
+        check_node_version
     else
         install_node_npm
     fi

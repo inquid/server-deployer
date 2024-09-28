@@ -41,6 +41,8 @@ start_pm2_process () {
     local process_name="deploy-server"
     local script_path="server.js"
 
+    npm install
+
     # Check if PM2 process with the given name already exists
     if pm2 list | grep -q "$process_name"; then
         echo "PM2 process '$process_name' already exists. Restarting it..."

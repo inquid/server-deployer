@@ -125,8 +125,8 @@ app.post('/deploy', (req, res) => {
             status: 'deploying'
         });
 
-        // Command to call the deploy.sh script
-        const deployProcess = spawn('bash', [path.join(__dirname, 'scripts/deploy.sh')]);
+        // Command to call the deployer.sh script
+        const deployProcess = spawn('bash', [path.join(__dirname, 'scripts/deployer.sh')]);
 
         // Capture stdout and stderr
         deployProcess.stdout.on('data', (data) => {

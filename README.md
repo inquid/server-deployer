@@ -37,8 +37,14 @@ Before setting up the project, ensure your system meets the following requiremen
 ## Usage
 
 ```
+wget https://github.com/inquid/server-deployer/archive/refs/heads/main.zip
+
+unzip main.zip
+
+cd server-deployer-main
+
 chmod +x scripts/setup_and_start.sh
-chmod +x scripts/deploy.sh
+chmod +x scripts/deployer.sh
 
 ./scripts/setup_and_start.sh
 ```
@@ -78,8 +84,3 @@ Check Deployment Status:
 ```
 curl http://localhost:3000/status
 ```
-
-
-
-
-

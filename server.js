@@ -135,9 +135,9 @@ app.post('/deploy', (req, res) => {
             status: 'deploying'
         });
 
-        // Command to call the deploy.sh script with parameters
+        // Command to call the deployer.sh script with parameters
         const deployProcess = spawn('bash', [
-            path.join(__dirname, 'deploy.sh'),
+            path.join(__dirname, 'scripts/deployer.sh'),
             '--container-name', containerName,
             '--image-name', imageName,
             '--s3-bucket', s3Bucket,

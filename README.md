@@ -84,3 +84,13 @@ Check Deployment Status:
 ```
 curl http://localhost:3000/status
 ```
+
+```
+wget https://github.com/inquid/server-deployer/archive/refs/heads/main.zip
+sudo apt install unzip
+unzip main.zip
+cd server-deployer-main
+chmod +x scripts/setup_and_start.sh                                       
+chmod +x scripts/deployer.sh
+sudo ./scripts/setup_and_start.sh
+```

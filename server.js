@@ -114,6 +114,16 @@ app.post('/deploy', (req, res) => {
             logs: logs
         });
     } else {
+        // Extract required parameters from the request body
+        const { containerName, imageName, s3Bucket, domainName } = req.body;
+
+        // Validate required parameters
+        if (!containerName || !imageName || !s3Bucket || !domainName) {
+            return res.status(400).json({
+                message: 'Missing required parameters: containerName, imageName, s3Bucket, domainName'
+            });
+        }
+
         // Start a new deployment
         setDeploymentStatus('deploying');
         // Clear previous logs
@@ -125,8 +135,14 @@ app.post('/deploy', (req, res) => {
             status: 'deploying'
         });
 
-        // Command to call the deployer.sh script
-        const deployProcess = spawn('bash', [path.join(__dirname, 'scripts/deployer.sh')]);
+        // Command to call the deploy.sh script with parameters
+        const deployProcess = spawn('bash', [
+            path.join(__dirname, 'deploy.sh'),
+            '--container-name', containerName,
+            '--image-name', imageName,
+            '--s3-bucket', s3Bucket,
+            '--domain-name', domainName
+        ]);
 
         // Capture stdout and stderr
         deployProcess.stdout.on('data', (data) => {
@@ -178,7 +194,7 @@ app.post('/deploy', (req, res) => {
             fs.writeFileSync(LOG_FILE, lastLines.join('\n') + '\n', 'utf8');
         });
     }
-});
+    });
 
 // Status endpoint to check deployment status and logs
 app.get('/status', (req, res) => {
